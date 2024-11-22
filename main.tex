@@ -1,0 +1,219 @@
+\documentclass[a4paper, xelatex, ja=standard]{bxjsarticle}
+% \setpagelayout*{top=25truemm,bottom=25truemm,left=25truemm,right=25truemm}
+
+% パッケージインストール
+% \usepackage{setting}
+\usepackage{plisting}
+% \usepackage{../../plisting}
+\usepackage{docmute}
+
+% 文書開始
+\begin{document}
+
+\maketitle
+\section{命令対応表}
+\subsection{機械語}
+\subsubsection*{R形式}
+\begin{table}[h]
+  \centering
+  \caption{R形式機械語の構成}
+  \label{}
+  \begin{tabular}{|c|c|c|c|c|c|}\hline
+  \texttt{OP} & \texttt{rs} & \texttt{rt} & \texttt{rd} & \texttt{sham} & \texttt{func} \\\hline
+  6bit & 5bit & 5bit & 5bit & 5bit & 6bit \\\hline
+  \end{tabular}
+\end{table}
+\begin{enumerate}
+  \item[\texttt{OP}]オペレーションコード（命令操作コード, オペコード）
+  \item[\texttt{rs}]第1ソースのオペランドレジスタ
+  \item[\texttt{rt}]第2ソースのオペランドレジスタ
+  \item[\texttt{rd}]ディスティメーションのオペランドレジスタ（結果が入る）
+  \item[\texttt{sham}]ビットシフト
+  \item[\texttt{func}]機能、命令フィールドのバリエーションを示す（機能コード）
+\end{enumerate}
+
+\subsubsection*{I形式}
+\begin{table}[h]
+  \centering
+  \caption{I形式機械語の構成}
+  \label{}
+  \begin{tabular}{|c|c|c|c|}\hline
+  \texttt{OP} & \texttt{rs} & \texttt{rt} & \texttt{constant} or \texttt{address} \\\hline
+  6bit & 5bit & 5bit & 16bit \\\hline
+  \end{tabular}
+\end{table}
+\begin{enumerate}
+  \item[\texttt{OP}]オペレーションコード（命令操作コード, オペコード）
+  \item[\texttt{rs}]第1ソースのオペランドレジスタ
+  \item[\texttt{rt}]第2ソースのオペランドレジスタ（転送データが入る
+  \item[16bit]定数またはアドレス\\定数の場合には, 15bitで絶対値を示し, 左の1bitは符号を表す
+\end{enumerate}
+
+\subsection{MIPSレジスタ表}
+ポインタはアドレスのようなもの. \texttt{scanf}で\texttt{\&}をつけたけど, あれでポインタになる.
+\begin{table}[h]
+  \centering
+  \caption{MIPSレジスタ表}
+  \label{}
+  \begin{tabular}{|l|c|l|c|}\hline
+\multicolumn{1}{|c|}{名称} & レジスタ番号  & \multicolumn{1}{c|}{用途} & スタックの有無 \\ \hline
+\texttt{\$zero}      & 0       & 定数値ゼロ         & -  \\ \hline
+\texttt{\$v0 - \$v1} & 2 - 3   & 結果と式の評価     & 無 \\ \hline
+\texttt{\$a0 - \$a3} & 4 - 7   & 引数               & 有 \\ \hline
+\texttt{\$t0 - \$t7} & 8 - 15  & 数値演算レジスタ   & 無 \\ \hline
+\texttt{\$s0 - \$s7} & 16 - 23 & アドレスレジスタ   & 有 \\ \hline
+\texttt{\$t8 - \$t9} & 24 - 25 & 予備のレジスタ     & 無 \\ \hline
+\texttt{\$gp}        & 28      & グローバルポインタ & 有 \\ \hline
+\texttt{\$sp}        & 29      & スタックポインタ   & 有 \\ \hline
+\texttt{\$fp}        & 30      & フレームポインタ   & 有 \\ \hline
+\texttt{\$ra}        & 31      & 戻りアドレス       & 有 \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{MIPS命令表}
+次のページに載ってます.
+% \begin{table}[h]
+%   \centering
+%   \caption{}
+%   \label{}
+%   \rotatebox{90}{
+%   \begin{tabular}{cc}
+%   c & c
+%   \end{tabular}
+%   }
+% \end{table}
+\begin{table}[h]
+  \centering
+  \caption{MIPS命令表}
+  \label{}
+\rotatebox{90}{
+\begin{tabular}{|l|l|l|c|l|}
+\hline
+\multicolumn{1}{|c|}{命令} & \multicolumn{1}{c|}{表記例}  & \multicolumn{1}{c|}{意味}  & 形式 & \multicolumn{1}{c|}{備考} \\ \hline
+add                        & \texttt{add \$s1, \$s2, \$s3}  & \texttt{\$s1=\$s2+\$s3} & R形式 & 加算をするよ！\\ \hline
+subtract                   & \texttt{sub \$s1, \$s2, \$s3}  & \texttt{\$s1=\$s2-\$s3} & R形式 & 減算をするよ！\\ \hline
+add im              & \texttt{addi \$s1, \$s2, 4}    & \texttt{\$s1=\$s2+4} & I形式 & 定数との加減算 \\ \hline
+load word                  & \texttt{lw \$s1, 4(\$s2)}      & \texttt{\$s1=memory[\$s2+4]} & I形式 & メモリからレジスタへ \\ \hline
+store word                 & \texttt{sw \$s1, 4(\$s2)}      & \texttt{memory[\$s2+4]=\$s1} & I形式 & レジスタからメモリへ \\ \hline
+and                        & \texttt{and \$s1, \$s2, \$s3}  & \texttt{\$s1=\$s2\&\$s3} & R形式 & bit単位のAND \\ \hline
+or                         & \texttt{or \$s1, \$s2, \$s3}   & \texttt{\$s1=\$s2|\$s3} & R形式 & bit単位のOR \\ \hline
+nor                        & \texttt{nor \$s1, \$s2, \$s3}  & \texttt{\$s1=~(\$s2|\$s3)} & R形式 & bit単位のNOR \\ \hline
+and im              & \texttt{andi \$s1, \$s2, 100}  & \texttt{\$s1=\$s2\&100} & I形式 & 定数とのbit単位のAND \\ \hline
+or im               & \texttt{ori \$s1, \$s2, 100}   & \texttt{\$s1=\$s2|100} & I形式 & 定数のbit単位のOR \\ \hline
+shift left logical         & \texttt{sll \$s1, \$s2, 10}    & \texttt{\$s1=\$s2<<10} & I形式 & 定数分左シフト \\ \hline
+shift right logical        & \texttt{srl \$s1, \$s2, 10}    & \texttt{\$s1=\$s2>>10} & I形式 & 定数分右シフト \\ \hline
+branch on equal            & \texttt{beq \$s1, \$s2, Label} & \texttt{if(\$s1==\$s2)goto Label} & I形式 & 等しいとき分岐 \\ \hline
+branch on not equal        & \texttt{bne \$s1, \$s2, Label} & \texttt{if(\$s1!=\$s2)goto Label} & I形式 & 等しくないとき分岐 \\ \hline
+set on less than           & \texttt{slt \$s1, \$s2, \$s3}  & \texttt{if(\$s2<\$s3)\$s1=1; else\$s1=0;} & R形式 & より小さいか(\texttt{beq}+\texttt{bne})\\\hline
+set on less than im & \texttt{slti \$s1, \$s2, 100}  & \texttt{if(\$s2<100)\$s1=1; else \$s1=0;} & I形式 &定数値よりも小さいかの分岐 \\ \hline
+jump                       & \texttt{j Label} & \texttt{goto Label} & 無所属 & 目的のlabelへの無条件分岐\\ \hline
+jal & \texttt{jal Label} & 良い例が思いつかない & わからん & 行き(アドレスを\texttt{a0}に入れる) \\ \hline
+jr                   & \texttt{jr \$ra} & 上に同じく & わからん & 帰り(\texttt{\$ra}を入れようね) \\ \hline
+\end{tabular}
+}
+\end{table}
+
+\clearpage
+\begin{center}
+ここから先は持ち込み不可ゾーンです.
+\end{center}
+\section{アセンブリ言語例}
+\subsection{if文}
+
+\begin{figure}[h]
+\centering
+\begin{minipage}[t]{0.3\linewidth}
+\begin{lstlisting}[caption=C言語でのif文,label=]
+if(i == j){
+  f = g + h;
+} else {
+  f = g- h;
+}
+\end{lstlisting}
+\end{minipage}
+\hspace{15pt}
+\begin{minipage}[t]{0.5\linewidth}
+\begin{lstlisting}[caption=MIPS言語でのif文,label=]
+/********************************************
+$s0=f, $s1=g, $s2=h, $s3=i, $s4=j
+********************************************/
+
+      bne $s3, $s4, Else // falseのときExitへジャンプ
+      add $s0, $s1, $s2  // trueのときの動作
+      j   Exit           // 強制的にExitへ
+Else: sub $s0, $s1, $s2  // elseの処理
+Exit:
+\end{lstlisting}
+\end{minipage}
+\label{}
+\end{figure}
+
+\subsection{ループの組み方, for文}
+
+\begin{figure}[h]
+\centering
+\begin{minipage}[t]{0.3\linewidth}
+\begin{lstlisting}[caption=C言語でのfor文,label=]
+int A[4], X=0;
+
+for(int i=0; i<4; i++){
+  X = X + A[i];
+}
+\end{lstlisting}
+\end{minipage}
+\hspace{15pt}
+\begin{minipage}[t]{0.5\linewidth}
+\begin{lstlisting}[caption=MIPS言語でのfor文,label=]
+/********************************************
+$s0=A's 1st address, $t0=i, $t1=X, $t2=4
+********************************************/
+
+      add  $t0, $zero, $zero // i=0とする
+      add  $t1, $zero, $zero // X=0とする
+      addi $t2, $zero, 4     // ループの回数
+      add  $s1, $zero, $s0   // 開始アドレスのコピー
+Loop: beq  $t0, $t2, Exit    // $t0=$t2なら脱出
+      lw   $t3, 0($s1)       // $t3に所定の場所のAをコピー
+      add  $t1, $t1, $t3     // X=X+A[i] 
+      addi $s1, $s1, 4       // アドレスのインクリメントに相当
+      addi $t0, $t0, 1       // 回数のインクリメント
+\end{lstlisting}
+\end{minipage}
+\label{}
+\end{figure}
+
+\subsection{ループの組み方, for文}
+
+\begin{figure}[h]
+\centering
+\begin{minipage}[t]{0.3\linewidth}
+\begin{lstlisting}[caption=C言語でのfor文,label=]
+int A[4], X=0;
+
+for(int i=0; i<4; i++){
+  X = X + A[i];
+}
+\end{lstlisting}
+\end{minipage}
+\hspace{15pt}
+\begin{minipage}[t]{0.5\linewidth}
+\begin{lstlisting}[caption=MIPS言語でのfor文,label=]
+/********************************************
+$s0=A's 1st address, $t0=i, $t1=X, $t2=4
+********************************************/
+
+      add  $t0, $zero, $zero // i=0とする
+      add  $t1, $zero, $zero // X=0とする
+      addi $t2, $zero, 4     // ループの回数
+      add  $s1, $zero, $s0   // 開始アドレスのコピー
+Loop: beq  $t0, $t2, Exit    // $t0=$t2なら脱出
+      lw   $t3, 0($s1)       // $t3に所定の場所のAをコピー
+      add  $t1, $t1, $t3     // X=X+A[i] 
+      addi $s1, $s1, 4       // アドレスのインクリメントに相当
+      addi $t0, $t0, 1       // 回数のインクリメント
+\end{lstlisting}
+\end{minipage}
+\label{}
+\end{figure}
+
+\end{document}
